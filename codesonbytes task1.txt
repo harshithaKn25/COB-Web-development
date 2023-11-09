@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #quote {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #originalText {
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        #inputBox {
+            font-size: 1em;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        #result {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        #start {
+            background-color: #007bff;
+        }
+
+        #pause {
+            background-color: #ffc107;
+        }
+
+        #resume {
+            background-color: #28a745;
+        }
+
+        #restart {
+            background-color: #dc3545;
+        }
+
+        #timerDropdown {
+            font-size: 1em;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Typing Speed Test</h1>
+        <div id="quote">Type the following:</div>
+        <div id="originalText"></div>
+        <div id="inputBox" contenteditable="true"></div>
+        <div>
+            <label for="timerDropdown">Choose Time:</label>
+            <select id="timerDropdown">
+                <option value="60000">1 minute</option>
+                <option value="120000">2 minutes</option>
+                <option value="180000">3 minutes</option>
+                <option value="240000">4 minutes</option>
+                <option value="300000">5 minutes</option>
+            </select>
+        </div>
+        <button id="start" onclick="startTest()">Start Test</button>
+        <button id="pause" onclick="pauseTest()">Pause</button>
+        <button id="resume" onclick="resumeTest()">Resume</button>
+        <button id="restart" onclick="restartTest()">Restart</button>
+        <div id="result"></div>
+        <div id="timer"></div>
+        <div id="finalResult"></div>
+    </div>
+
+    <script>
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
+            "She sells sea shells by the sea shore.",
+            "Peter Piper picked a peck of pickled peppers.",
+            "Sally sells seashells at the seashore."
+        ];
+
+        let currentSentenceIndex = 0;
+        let timer;
+        let startTime;
+        let elapsedTime = 0;
+        let isTimerRunning = false;
+        let selectedTime = 60000; // Default time: 1 minute
+        let sentencesTyped = 0;
+
+        function startTest() {
+            const startButton = document.getElementById('start');
+            const pauseButton = document.getElementById('pause');
+            const resumeButton = document.getElementById('resume');
+            const restartButton = document.getElementById('restart');
+            const inputBox = document.getElementById('inputBox');
+            const timerDropdown = document.getElementById('timerDropdown');
+
+            selectedTime = parseInt(timerDropdown.value, 10);
+            currentSentenceIndex = 0;
+            sentencesTyped = 0;
+
+            startButton.disabled = true;
+            pauseButton.disabled = false;
+            resumeButton.disabled = true;
+            restartButton.disabled = false;
+            inputBox.contentEditable = true;
+
+            updateSentence();
+            startTime = new Date().getTime() - elapsedTime; // Adjusted to continue from where it left off
+            isTimerRunning = true;
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function updateSentence() {
+            const originalText = document.getElementById('originalText');
+            originalText.innerText = sentences[currentSentenceIndex];
+        }
+
+        function pauseTest() {
+            const pauseButton = document.getElementById('pause');
+            const resumeButton = document.getElementById('resume');
+
+            pauseButton.disabled = true;
+            resumeButton.disabled = false;
+
+            isTimerRunning = false;
+            clearInterval(timer);
+        }
+
+        function resumeTest() {
+            const pauseButton = document.getElementById('pause');
+            const resumeButton = document.getElementById('resume');
+
+            pauseButton.disabled = false;
+            resumeButton.disabled = true;
+
+            isTimerRunning = true;
+            startTime = new Date().getTime() - elapsedTime;
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function restartTest() {
+            const startButton = document.getElementById('start');
+            const pauseButton = document.getElementById('pause');
+            const resumeButton = document.getElementById('resume');
+            const restartButton = document.getElementById('restart');
+            const inputBox = document.getElementById('inputBox');
+            const timerDropdown = document.getElementById('timerDropdown');
+
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+            resumeButton.disabled = true;
+            restartButton.disabled = true;
+            inputBox.contentEditable = false;
+            inputBox.innerText = '';
+            document.getElementById('result').innerText = '';
+            document.getElementById('timer').innerText = '';
+            sentencesTyped = 0;
+
+            clearInterval(timer);
+            isTimerRunning = false;
+            selectedTime = parseInt(timerDropdown.value, 10);
+            updateSentence();
+            startTime = new Date().getTime(); // Adjusted to start the timer fresh
+            timer = setInterval(updateTimer, 1000);
+            isTimerRunning = true;
+        }
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            elapsedTime = now - startTime;
+            const remainingTime = Math.max(0, selectedTime - elapsedTime);
+
+            const minutes = Math.floor(remainingTime / 60000);
+            const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+            document.getElementById('timer').innerText = `${minutes}:${seconds}`;
+
+            if (remainingTime <= 0) {
+                clearInterval(timer);
+                isTimerRunning = false;
+                document.getElementById('timer').innerText = 'Time Up!';
+                const inputBox = document.getElementById('inputBox');
+                inputBox.contentEditable = false;
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const inputBox = document.getElementById('inputBox');
+            const userText = inputBox.innerText.trim();
+            const words = userText.split(' ');
+
+            const errors = words.reduce((count, word, index) => {
+                return count + (word !== sentences[currentSentenceIndex].split(' ')[index]);
+            }, 0);
+
+            const accuracy = ((words.length - errors) / words.length) * 100;
+            const speed = Math.round((words.length / 5) / (selectedTime / 60000)); // Assuming an average reading speed of 5 words per second
+
+            const result = document.getElementById('result');
+            result.innerHTML = `Your typing speed is ${speed} words per minute with an accuracy of ${accuracy.toFixed(2)}%.`;
+
+            currentSentenceIndex++;
+            sentencesTyped++;
+
+            if (currentSentenceIndex < sentences.length) {
+                updateSentence();
+                startTime = new Date().getTime() - elapsedTime; // Adjusted to continue the timer for the next sentence
+                isTimerRunning = true;
+            } else {
+                // Test completed
+                result.innerHTML += `<br>You typed ${sentencesTyped} sentences within the time limit.`;
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            const finalResult = document.getElementById('finalResult');
+            const totalTime = selectedTime / 60000; // Convert total time to minutes
+            const totalSentences = sentences.length;
+            const totalWords = totalSentences * 5; // Assuming an average of 5 words per sentence
+
+            const totalElapsedTime = elapsedTime / 60000; // Convert elapsed time to minutes
+            const overallSpeed = Math.round((totalWords / totalElapsedTime));
+
+            finalResult.innerHTML = `Your overall typing speed is ${overallSpeed} words per minute for the entire test.`;
+        }
+
+        // Check if the user has correctly typed the current sentence
+        document.getElementById('inputBox').addEventListener('input', function () {
+            const inputBox = document.getElementById('inputBox');
+            const userText = inputBox.innerText.trim();
+            const originalText = sentences[currentSentenceIndex];
+
+            if (userText === originalText) {
+                showResult();
+                inputBox.innerText = ''; // Clear the input box for the next sentence
+            }
+        });
+    </script>
+</body>
+</html>

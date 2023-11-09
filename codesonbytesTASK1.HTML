@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            font-family: cursive, sans-serif;
+            text-align: center;
+            background-image: url('sk.jpg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust background color and opacity */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #text {
+            font-size: 24px;
+        }
+
+        #timer {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        #input-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #time-up {
+            font-size: 30px;
+            color: red;
+            font-weight: bold;
+        }
+
+        #start-btn,
+        #pause-btn,
+        #resume-btn,
+        #restart-btn {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #start-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #start-btn:hover {
+            background-color: #45a049;
+        }
+
+        #pause-btn,
+        #resume-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #pause-btn:hover,
+        #resume-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        #restart-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #restart-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .disabled-input {
+            background-color: #f0f0f0;
+            pointer-events: none;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="text">they were shrouded in twilit vapor.
+was it incense? was it fog? their far
+gazes all converged and coalesced
+
+on a high edge of the prairie where a shrine
+hoveringly stood. veils of vapor radiated
+from gaunt pillars.
+
+rosy curls of air dried languorously.
+I couldn’t tell who these faint figures were
+but they felt familiar.
+
+they felt like a silvery shivery translation
+of those humans bowing crawling on the bank
+of the river in that calm
+
+rapturous picture by Tintoretto.<div>
+        <div id="timer">Timer: 1:00</div>
+        <textarea id="input-box" placeholder="Start typing here..." oninput="checkInput(this)"></textarea>
+        <div id="result"></div>
+        <div id="time-up"></div>
+        <button id="start-btn" onclick="startTimer(60)">Start (1 Minute)</button>
+        <button id="start-btn" onclick="startTimer(120)">Start (2 Minutes)</button>
+        <button id="pause-btn" onclick="pauseTimer()" disabled>Pause</button>
+        <button id="resume-btn" onclick="resumeTimer()" disabled>Resume</button>
+        <button id="restart-btn" onclick="restartTimer()" disabled>Restart</button>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft;
+        let isTimerRunning = false;
+        let originalText = "This is a typing speed test. Try to type this accurately and as fast as possible.";
+        let isTimeUp = false;
+
+        function startTimer(seconds) {
+            if (isTimerRunning) {
+                return;
+            }
+
+            isTimeUp = false;
+            isTimerRunning = true;
+            timeLeft = seconds;
+
+            document.getElementById("start-btn").disabled = true;
+            document.getElementById("pause-btn").disabled = false;
+            document.getElementById("restart-btn").disabled = true;
+            document.getElementById("resume-btn").disabled = true;
+            document.getElementById("input-box").classList.remove("disabled-input");
+            document.getElementById("input-box").value = "";
+
+            updateTimerDisplay();
+
+            timer = setInterval(function () {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    isTimerRunning = false;
+                    isTimeUp = true;
+                    document.getElementById("input-box").classList.add("disabled-input");
+                    document.getElementById("start-btn").disabled = false;
+                    document.getElementById("pause-btn").disabled = true;
+                    document.getElementById("restart-btn").disabled = false;
+                    document.getElementById("resume-btn").disabled = false;
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timer);
+            isTimerRunning = false;
+            document.getElementById("start-btn").disabled = false;
+            document.getElementById("pause-btn").disabled = true;
+            document.getElementById("restart-btn").disabled = false;
+            document.getElementById("resume-btn").disabled = false;
+        }
+
+        function resumeTimer() {
+            if (isTimerRunning) {
+                return;
+            }
+
+            isTimeUp = false;
+            isTimerRunning = true;
+            document.getElementById("start-btn").disabled = true;
+            document.getElementById("pause-btn").disabled = false;
+            document.getElementById("restart-btn").disabled = false;
+            document.getElementById("resume-btn").disabled = true;
+            document.getElementById("input-box").classList.remove("disabled-input");
+
+            timer = setInterval(function () {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    isTimerRunning = false;
+                    isTimeUp = true;
+                    document.getElementById("input-box").classList.add("disabled-input");
+                    document.getElementById("start-btn").disabled = false;
+                    document.getElementById("pause-btn").disabled = true;
+                    document.getElementById("restart-btn").disabled = false;
+                    document.getElementById("resume-btn").disabled = false;
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function restartTimer() {
+            clearInterval(timer);
+            isTimeUp = false;
+            isTimerRunning = false;
+            document.getElementById("start-btn").disabled = false;
+            document.getElementById("pause-btn").disabled = true;
+            document.getElementById("restart-btn").disabled = true;
+            document.getElementById("resume-btn").disabled = true;
+            document.getElementById("input-box").value = "";
+            document.getElementById("input-box").classList.remove("disabled-input");
+            timeLeft = 60; // Set the timer back to 1 minute or adjust as needed
+            updateTimerDisplay();
+            hideResult();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("timer").innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        function showResult() {
+            const inputText = document.getElementById("input-box").value;
+            const accuracy = calculateAccuracy(originalText, inputText);
+
+            document.getElementById("result").innerText = `Accuracy: ${accuracy.toFixed(2)}%`;
+            if (isTimeUp) {
+                document.getElementById("time-up").innerText = "Time's Up!";
+            }
+
+            // Mark incorrect letters with red color
+            const textElement = document.getElementById("text");
+            const inputArray = inputText.split("");
+            const originalArray = originalText.split("");
+            let markedText = "";
+
+            for (let i = 0; i < inputArray.length; i++) {
+                if (inputArray[i] === originalArray[i]) {
+                    markedText += inputArray[i];
+                } else {
+                    markedText += `<span class="incorrect">${inputArray[i]}</span>`;
+                }
+            }
+
+            textElement.innerHTML = `Type the following text: ${markedText}`;
+        }
+
+        function hideResult() {
+            document.getElementById("result").innerText = "";
+            document.getElementById("time-up").innerText = "";
+        }
+
+        function checkInput(inputElement) {
+            if (isTimeUp || !isTimerRunning) {
+                // Disable further input after time is up or when the timer is paused
+                inputElement.value = inputElement.value.slice(0, -1);
+            }
+        }
+
+        function calculateAccuracy(original, typed) {
+            const minLength = Math.min(original.length, typed.length);
+            let correct = 0;
+
+            for (let i = 0; i < minLength; i++) {
+                if (original[i] === typed[i]) {
+                    correct++;
+                }
+            }
+
+            return (correct / original.length) * 100;
+        }
+    </script>
+</body>
+</html>

@@ -120,7 +120,7 @@
         let startTime;
         let elapsedTime = 0;
         let isTimerRunning = false;
-        let selectedTime = 60000; // Default time: 1 minute
+        let selectedTime = 60000; 
         let sentencesTyped = 0;
 
         function startTest() {
@@ -142,7 +142,7 @@
             inputBox.contentEditable = true;
 
             updateSentence();
-            startTime = new Date().getTime() - elapsedTime; // Adjusted to continue from where it left off
+            startTime = new Date().getTime() - elapsedTime; 
             isTimerRunning = true;
             timer = setInterval(updateTimer, 1000);
         }
@@ -197,7 +197,7 @@
             isTimerRunning = false;
             selectedTime = parseInt(timerDropdown.value, 10);
             updateSentence();
-            startTime = new Date().getTime(); // Adjusted to start the timer fresh
+            startTime = new Date().getTime(); 
             timer = setInterval(updateTimer, 1000);
             isTimerRunning = true;
         }
@@ -232,7 +232,7 @@
             }, 0);
 
             const accuracy = ((words.length - errors) / words.length) * 100;
-            const speed = Math.round((words.length / 5) / (selectedTime / 60000)); // Assuming an average reading speed of 5 words per second
+            const speed = Math.round((words.length / 5) / (selectedTime / 60000)); 
 
             const result = document.getElementById('result');
             result.innerHTML = `Your typing speed is ${speed} words per minute with an accuracy of ${accuracy.toFixed(2)}%.`;
@@ -253,11 +253,11 @@
 
         function showFinalResult() {
             const finalResult = document.getElementById('finalResult');
-            const totalTime = selectedTime / 60000; // Convert total time to minutes
+            const totalTime = selectedTime / 60000; 
             const totalSentences = sentences.length;
-            const totalWords = totalSentences * 5; // Assuming an average of 5 words per sentence
+            const totalWords = totalSentences * 5; 
 
-            const totalElapsedTime = elapsedTime / 60000; // Convert elapsed time to minutes
+            const totalElapsedTime = elapsedTime / 60000; 
             const overallSpeed = Math.round((totalWords / totalElapsedTime));
 
             finalResult.innerHTML = `Your overall typing speed is ${overallSpeed} words per minute for the entire test.`;
@@ -271,7 +271,7 @@
 
             if (userText === originalText) {
                 showResult();
-                inputBox.innerText = ''; // Clear the input box for the next sentence
+                inputBox.innerText = ''; 
             }
         });
     </script>

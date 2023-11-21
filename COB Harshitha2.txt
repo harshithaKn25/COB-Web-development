@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #quiz-container {
+            width: 60%;
+            margin: auto;
+            padding: 150px;
+            border: 4px solid #3498db;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        #question {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #2980b9;
+        }
+
+        .correct-answer {
+            background-color: #2ecc71;
+            border: 1px solid #2ecc71 ;
+        }
+
+        .wrong-answer {
+            background-color: #e74c3c ;
+            border: 1px solid #e74c3c ;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .answer-image {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .final-score {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #3498db;
+        }
+
+        .score {
+            font-size: 20px;
+            margin-top: 10px;
+            color: #555;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const questions = [
+                {
+                    question: '1.Who is known as the "God of Cricket"?',
+                    options: ['Sachin Tendulkar', 'Virat Kohli', 'Rahul Dravid', 'Virender Sehwag'],
+                    correctAnswer: 'Sachin Tendulkar',
+                    image: 'https://imgur.com/B1ooQKm.jpg'
+                },
+                {
+                    question: '2.What is the full form of LBW ?',
+                    options: ['Length Ball Wide', 'Long By Wide', 'Length By Width', 'Leg Before Wicket'],
+                    correctAnswer: 'Leg Before Wicket',
+                    image: 'https://imgur.com/3mDTXpd.jpg'
+                },
+                {
+                    question: '3. What is the colour of the ball in 20 overs format ?',
+                    options: ['Red', 'Blue', 'White', 'Brown'],
+                    correctAnswer: 'White',
+                    image: 'https://imgur.com/3HXwiip.jpg'
+                },
+                {
+                    question: '4.Which of these Teams has never Won the World Cup ?',
+                    options: ['England', 'Afghanistan', 'Sri Lanka', 'Australia'],
+                    correctAnswer: 'Afghanistan',
+                    image: 'https://imgur.com/wYtr2iI.jpg'
+                },
+                {
+                    question: '5.How many Times has India won the world cup ?',
+                    options: ['1', '2', '3', '4'],
+                    correctAnswer: '2',
+                    image: 'https://imgur.com/jOjPzrC.jpg'
+                },
+                {
+                    question: '6.The international governing body of cricket is?',
+                    options: ['CCI', 'GCI', 'LIC', 'ICC'],
+                    correctAnswer: 'ICC',
+                    image: 'https://imgur.com/oQciozS.jpg'
+                },
+                {
+                    question: '7.What are the small pieces of wood on top of the stumps called?',
+                    options: ['Sticks', 'Bails', 'Bat', 'ball'],
+                    correctAnswer: 'Bails',
+                    image: 'https://imgur.com/afxPmDn.jpg'
+                },
+                {
+                    question: '8.Which of these teams has won the most ICC Champions Trophy titles?',
+                    options: ['India', 'Australia', 'England', 'Sri Lanka'],
+                    correctAnswer: 'Australia',
+                    image:'https://imgur.com/YrZMRdx.jpg'
+                },
+                {
+                    question: '9.Who is the present captain of Indian ODI team?',
+                    options: ['Rohit Sharma', 'Virat Kohli', 'KL Rahul ', 'Hardik Pandya'],
+                    correctAnswer: 'Rohit Sharma',
+                    image:'https://imgur.com/x7Qwy43.jpg'
+                },
+                {
+                    question: '10.In which franchise is Virat Kohli playing in IPL?',
+                    options: ['CSK', 'RCB', 'KKR', 'GT'],
+                    correctAnswer: 'RCB',
+                    image: 'https://imgur.com/vDdGCLC.jpg'
+                },
+            ];
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+
+            function startQuiz() {
+                showQuestion();
+            }
+
+            function showQuestion() {
+                const currentQuestion = questions[currentQuestionIndex];
+                document.getElementById('question').innerText = currentQuestion.question;
+
+                const optionsContainer = document.getElementById('options');
+                optionsContainer.innerHTML = '';
+
+                currentQuestion.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.classList.add('option');
+                    optionElement.innerText = option;
+                    optionElement.addEventListener('click', () => checkAnswer(index));
+                    optionsContainer.appendChild(optionElement);
+                });
+            }
+
+            function checkAnswer(selectedIndex) {
+                const currentQuestion = questions[currentQuestionIndex];
+                const options = document.getElementsByClassName('option');
+
+                if (currentQuestion.options[selectedIndex] === currentQuestion.correctAnswer) {
+                    options[selectedIndex].classList.add('correct-answer');
+                    document.getElementById('result').innerText = 'Congratulations! Correct Answer!';
+                    score++;
+                } else {
+                    options[selectedIndex].classList.add('wrong-answer');
+                    document.getElementById('result').innerText = 'Try next time!';
+
+                
+                    const correctIndex = currentQuestion.options.findIndex(option => option === currentQuestion.correctAnswer);
+                    options[correctIndex].classList.add('correct-answer');
+                }
+
+                const answerImage = document.createElement('img');
+                answerImage.src = currentQuestion.image;
+                answerImage.classList.add('answer-image');
+                document.getElementById('quiz-container').appendChild(answerImage);
+
+                
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        resetQuiz();
+                        startQuiz();
+                    } else {
+                        showFinalScore();
+                    }
+                }, 3000);
+            }
+
+            function resetQuiz() {
+                const options = document.getElementsByClassName('option');
+                Array.from(options).forEach(option => {
+                    option.classList.remove('correct-answer', 'wrong-answer');
+                });
+
+                document.getElementById('result').innerText = '';
+                const answerImage = document.querySelector('.answer-image');
+                if (answerImage) {
+                    answerImage.remove();
+                }
+            }
+
+            function showFinalScore() {
+                document.getElementById('quiz-container').innerHTML = `
+                    <h2>Quiz Completed!</h2>
+                    <p>Your Score: ${score}/${questions.length}</p>
+                `;
+            }
+
+            startQuiz();
+        });
+    </script>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1>Welcome to the cricket quiz</h1>
+        <h2 id="question"></h2>
+        <div id="options" class="options"></div>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
